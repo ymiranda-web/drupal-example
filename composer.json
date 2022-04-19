@@ -16,9 +16,11 @@
     ],
     "require": {
         "composer/installers": "^1.9",
+        "drupal/content_sync": "^3.0@beta",
         "drupal/core-composer-scaffold": "^9.3",
         "drupal/core-project-message": "^9.3",
         "drupal/core-recommended": "^9.3",
+        "drupal/oembed_providers": "^2.0",
         "drush/drush": "^11.0"
     },
     "conflict": {
