@@ -21,11 +21,15 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: ${{ github.event.inputs.environment }}
-      url: ${{ secrets.DEPLOY_URL }}
+      url: ${{needs.deploy-develop.outputs.url}}
     permissions:
       contents: read
       packages: read
+    outputs:
+      url: ${{ steps.variable.outputs.url }}
     steps:
+      - id: variable
+        run: echo "::set-output name=url::${ secrets.DEPLOY_URL } "
       - name: executing remote ssh commands using key
         uses: appleboy/ssh-action@master
         env:
