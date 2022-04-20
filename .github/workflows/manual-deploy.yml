@@ -16,12 +16,14 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  deploy-develop:
+  deploy:
     name: deploy to develop
     runs-on: ubuntu-latest
     environment:
       name: ${{ github.event.inputs.environment }}
-      url: ${{needs.deploy-develop.outputs.url}}
+      url: ${{needs.deploy.outputs.url}}
+    env:
+      DEPLOY_URL: ${{ secrets.DEPLOY_URL }}
     permissions:
       contents: read
       packages: read
@@ -29,7 +31,7 @@ jobs:
       url: ${{ steps.variable.outputs.url }}
     steps:
       - id: variable
-        run: echo "::set-output name=url::${ secrets.DEPLOY_URL }"
+        run: echo "::set-output name=url::$DEPLOY_URL"
       - name: executing remote ssh commands using key
         uses: appleboy/ssh-action@master
         env:
