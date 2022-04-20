@@ -1,0 +1,51 @@
+name: manual-deploy
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Entorno a desplegar'
+        required: true
+        default: 'development'
+      tags:
+        description: 'Tag de la aplicación'
+        required: true
+        default: 'v'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  deploy-develop:
+    name: deploy to develop
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.event.inputs.environment }}
+      url: ${{ secrets.SERVICE_URL }}
+    if: startsWith(github.event.ref, 'refs/tags/v')
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set tag env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      - name: executing remote ssh commands using key
+        uses: appleboy/ssh-action@master
+        env:
+          USER_MACHINE: ${{ secrets.USERNAME }}
+          REGISTRY: ${{ env.REGISTRY }}
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
+          IMAGE_TAG: ${{ github.event.inputs.environment }}
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          envs: USER_MACHINE,REGISTRY,IMAGE_NAME,IMAGE_TAG
+          script: |
+            cd /home/$USER_MACHINE/drupal
+            docker pull $REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+            docker-compose up -d
+            docker-compose exec app drush config:import --yes
+            docker-compose exec app drush cr
+            echo $IMAGE_TAG >> .deployed
