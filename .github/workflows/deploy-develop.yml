@@ -66,13 +66,15 @@ jobs:
       name: development
       url: ${{needs.deploy-develop.outputs.url}}
     if: startsWith(github.event.ref, 'refs/tags/v')
+    env:
+      DEPLOY_URL: ${{ secrets.DEPLOY_URL }}
     permissions:
       contents: read
       packages: read
     steps:
       - uses: actions/checkout@v3
       - id: variable
-        run: echo "::set-output name=url::${ secrets.DEPLOY_URL }"
+        run: echo "::set-output name=url::$DEPLOY_URL"
       - name: Set tag env
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - name: executing remote ssh commands using key
