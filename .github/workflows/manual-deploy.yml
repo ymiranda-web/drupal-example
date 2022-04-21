@@ -47,4 +47,5 @@ jobs:
             docker-compose exec app drush config:import --yes
             docker-compose exec app drush cr
             echo $IMAGE_TAG > .deployed
+            printenv > .envs
             export > .vars
