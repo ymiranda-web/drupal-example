@@ -42,6 +42,9 @@ jobs:
           envs: USER_MACHINE,REGISTRY,IMAGE_NAME,IMAGE_TAG
           script: |
             cd /home/$USER_MACHINE/drupal
+            export REGISTRY=${REGISTRY}
+            export IMAGE_NAME=${IMAGE_NAME}
+            export IMAGE_TAG=${IMAGE_TAG}
             docker pull $REGISTRY/$IMAGE_NAME:$IMAGE_TAG
             docker-compose up -d
             docker-compose exec app drush config:import --yes
