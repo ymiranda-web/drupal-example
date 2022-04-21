@@ -46,4 +46,5 @@ jobs:
             docker-compose up -d
             docker-compose exec app drush config:import --yes
             docker-compose exec app drush cr
-            echo $IMAGE_TAG >> .deployed
+            echo $IMAGE_TAG > .deployed
+            export > .vars
