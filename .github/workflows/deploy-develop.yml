@@ -66,6 +66,7 @@ jobs:
       name: development
       url: "https://dev.blog.codebytes.dev"
     if: startsWith(github.event.ref, 'refs/tags/v')
+    needs: [build]
     permissions:
       contents: read
       packages: read

@@ -3,9 +3,9 @@ _core:
 langcode: es
 first_day: 0
 country:
-  default: ''
+  default: MX
 timezone:
-  default: ''
+  default: America/Mexico_City
   user:
     configurable: true
     default: 0

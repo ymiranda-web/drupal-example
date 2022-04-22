@@ -2,8 +2,8 @@ _core:
   default_config_hash: VDJxTZtQR21qB4lvOq8zszJZLvLKrSPQpdn2E3T71Ww
 langcode: es
 uuid: 6af7dd1c-7b9a-4fec-9553-d295948cf2cc
-name: Drupal
-mail: ''
+name: 'Blog Codebytes'
+mail: contacto@yairmiranda.com
 slogan: ''
 page:
   403: ''

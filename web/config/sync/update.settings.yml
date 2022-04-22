@@ -9,6 +9,5 @@ fetch:
   max_attempts: 2
   timeout: 30
 notification:
-  emails:
-    - contacto@yairmiranda.com
+  emails: {  }
   threshold: all
