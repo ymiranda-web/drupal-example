@@ -47,6 +47,6 @@ jobs:
             export IMAGE_TAG=${IMAGE_TAG:1}
             docker pull $REGISTRY/$IMAGE_NAME:$IMAGE_TAG
             docker-compose up -d
-            docker-compose exec app drush config:import --yes
-            docker-compose exec app drush cr
+            docker-compose exec -it app drush config:import --yes
+            docker-compose exec -it app drush cr
             echo $IMAGE_TAG > .deployed
