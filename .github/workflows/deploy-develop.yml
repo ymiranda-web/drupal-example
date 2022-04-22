@@ -64,6 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: development
+      url: "https://dev.blog.codebytes.dev"
     if: startsWith(github.event.ref, 'refs/tags/v')
     permissions:
       contents: read
@@ -86,9 +87,11 @@ jobs:
           envs: USER_MACHINE,REGISTRY,IMAGE_NAME,IMAGE_TAG
           script: |
             cd /home/$USER_MACHINE/drupal
+            export REGISTRY=${REGISTRY}
+            export IMAGE_NAME=${IMAGE_NAME}
+            export IMAGE_TAG=${IMAGE_TAG:1}
             docker pull $REGISTRY/$IMAGE_NAME:$IMAGE_TAG
             docker-compose up -d
             docker-compose exec app drush config:import --yes
             docker-compose exec app drush cr
             echo $IMAGE_TAG > .deployed
-            export > .vars
