@@ -1,11 +1,12 @@
-FROM ghcr.io/ymiranda-web/docker-templates:7.4-c2-base
+ARG BASE_IMAGE
+FROM ghcr.io/codebytes-dev/drupal-k8s:9.3.x-base
 
 LABEL maintainer="Luis Yair Miranda Gonzalez <contacto@yairmiranda.com>"
 
-USER noroot
+WORKDIR /var/www
 
 COPY ./composer.* .
 
 RUN composer install  --optimize-autoloader --no-interaction --no-progress
 
-COPY --chown=noroot . .
+COPY . .

@@ -1,22 +1,40 @@
 version: "3.9"
 services:
   app:
-    image: ghcr.io/ymiranda-web/docker-templates:7.4-c2-dev
+    build:
+      context: .
+      dockerfile: ./.docker/Dockerfile
+      args:
+        BASE_IMAGE: ${BASE_IMAGE}
     restart: always
     depends_on:
       - db
     volumes:
-      - ./:/var/www/app
+      - ./:/var/www
     environment:
       DB_DATABASE: ${DB_DATABASE}
       DB_HOST: ${DB_HOST}
       DB_PORT: ${DB_PORT}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_USERNAME: ${DB_USERNAME}
-    ports:
-      - "9999:80"
+#    ports:
+#      - "9999:80"
+    expose:
+      - "9000"
     links:
       - "db:mysql-server"
+    networks:
+      - backend
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./.docker/nginx/Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - app
+    restart: always
     networks:
       - backend
 

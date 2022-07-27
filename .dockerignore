@@ -1,7 +1,6 @@
 .git
 vendor
 web/sites/default/files
-.docker
 .github
 .env
 docker-compose.yml
@@ -17,3 +16,4 @@ docker-compose.yml
 /web/sites/*/files/
 
 /.idea/
+*.sql

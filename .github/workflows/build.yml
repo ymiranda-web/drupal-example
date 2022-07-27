@@ -1,21 +1,82 @@
-name: Build
+name: build
 on:
   push:
     branches:
-      - main
-      - develop
-  pull_request:
-    types: [opened, synchronize, reopened]
+    tags:
+      - 'v*.*.*'
+# Environment variables available to all jobs and steps in this workflow
+env:
+  COMPOSER_MEMORY_LIMIT: -1
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 jobs:
-  sonarcloud:
-    name: SonarCloud
-    runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    - uses: actions/checkout@master
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Login to DockerHub
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extraer metadata (tags, labels) para Docker PHP
+      id: meta-php
+      uses: docker/metadata-action@v4
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=raw,value=latest,enable={{is_default_branch}}
+        flavor: |
+          latest=auto
+
+    - name: Extraer metadata (tags, labels) para Docker NGINX
+      id: meta-nginx
+      uses: docker/metadata-action@v4
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=raw,value=latest,enable={{is_default_branch}}
+        flavor: |
+          latest=auto
+          suffix=nginx
+
+    - name: build and push to docker with PHP Kubernetes
+      uses: docker/build-push-action@v3
+      with:
+        file: ./docker/Dockerfile
+        context: .
+        push: true
+        tags: ${{ steps.meta-php.outputs.tags }}
+        labels: ${{ steps.meta-php.outputs.labels }}
+        platforms: linux/amd64
+
+    - name: build and push to docker with NGINX Kubernetes
+      uses: docker/build-push-action@v3
+      with:
+        file: ./docker/nginx/Dockerfile
+        context: .
+        push: true
+        tags: ${{ steps.meta-nginx.outputs.tags }}
+        labels: ${{ steps.meta-nginx.outputs.labels }}
+        platforms: linux/amd64
+
+
+

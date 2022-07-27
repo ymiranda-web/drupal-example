@@ -12,10 +12,6 @@
         {
             "type": "composer",
             "url": "https://packages.drupal.org/8"
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:lab-ti-tecnologico-de-monterrey-oficial/itesm-utility.git"
         }
     ],
     "require": {
@@ -33,8 +29,7 @@
         "drupal/pdf_api": "^2.2",
         "drupal/pdf_generator": "^2.0",
         "drupal/printable": "^2.1",
-        "drush/drush": "^11.0",
-        "drupal/itesm-utility": "^1.1.7"
+        "drush/drush": "^11.0"
     },
     "conflict": {
         "drupal/drupal": "*"
