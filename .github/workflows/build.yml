@@ -59,7 +59,7 @@ jobs:
           suffix=nginx
 
     - name: build and push to docker with PHP Kubernetes
-      uses: docker/build-push-action@v3
+      uses: docker/build-push-action@v4
       with:
         file: ./docker/Dockerfile
         context: .
@@ -69,7 +69,7 @@ jobs:
         platforms: linux/amd64
 
     - name: build and push to docker with NGINX Kubernetes
-      uses: docker/build-push-action@v3
+      uses: docker/build-push-action@v4
       with:
         file: ./docker/nginx/Dockerfile
         context: .
